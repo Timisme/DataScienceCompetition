@@ -1,0 +1,2 @@
+# DataScieneceCompetition
+Homeworks from COMPETITIONS IN DATA SCIENCES AND ARTIFICIAL INTELLIGENCE course.
