@@ -110,7 +110,7 @@ def main(training_data= 'training_data.csv', temp_data= 'temp_forecast.json', da
 		writer.writerow(['date', 'operating_reserve(MW)'])
 
 		for i in range(7):
-			writer.writerow([data['dates'][i], data['operating_reserve(MW)'][i]])
+			writer.writerow([data['dates'][i], int(data['operating_reserve(MW)'][i])])
 
 
 if __name__ == '__main__':
