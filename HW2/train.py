@@ -1,6 +1,4 @@
 import torch
-import matplotlib.pyplot as plt
-
 
 def train_test(model, optimizer, criterion, scheduler, train_dataloader, num_epochs, device):
     train_loss = {}
