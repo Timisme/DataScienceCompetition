@@ -68,6 +68,8 @@ if __name__ == '__main__':
     else:
         hold_position = 0
 
+    init_hold_position = hold_position
+
 
     preds = []
     # hold_position = 0
@@ -106,7 +108,8 @@ if __name__ == '__main__':
 
     with open(f'{args.output}', 'w', newline='') as f:
         writer = csv.writer(f)
+        writer.writerow([f'{init_hold_position}'])
         for i, row in test_data.iterrows():
-            if i < 19:
+            if i < 18:
                 writer.writerow([f'{predict_action(row)}'])
         print('output already done!')
