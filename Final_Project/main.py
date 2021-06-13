@@ -14,16 +14,16 @@ device= 'cuda' if torch.cuda.is_available() else 'cpu'
 def load_data(from_file= True):
 	if from_file:
 		'''load pkl from data'''
-		train_X= pd.read_pickle('../data/train_X.pkl')
-		train_y= np.load('../data/train_y.pkl', allow_pickle=True) # Series
-		test_X= pd.read_pickle('../data/test_X.pkl')
-		test_order_id= np.load('../data/test_order_id.npy')
+		train_X= pd.read_pickle('./data/train_X.pkl')
+		train_y= np.load('./data/train_y.pkl', allow_pickle=True) # Series
+		test_X= pd.read_pickle('./data/test_X.pkl')
+		test_order_id= np.load('./data/test_order_id.npy')
 	else:
 		train_X, train_y= get_data(train_bool= True)
 		test_X, test_order_id= get_data(train_bool= False)
 	return train_X, train_y, test_X, test_order_id
 
-train_X, train_y, test_X, test_order_id= load_data(from_file= True)
+train_X, train_y, test_X, test_order_id= load_data(from_file= False)
 
 train_dense_cols= ['train_days_since_prior_order', 'prior_order_count', 'prior_dspo_mean', 'prior_dspo_var', 'user_dep_ratio', 'user_aisle_ratio']
 test_dense_cols= ['test_days_since_prior_order', 'prior_order_count', 'prior_dspo_mean', 'prior_dspo_var', 'user_dep_ratio', 'user_aisle_ratio']
@@ -60,25 +60,25 @@ class DeepFM(nn.Module):
 		# self.FM_w = nn.Linear(1, n_class)
 		self.embedding_ws = nn.ModuleList()
 		for i in fields:
-  		self.embedding_ws.append(nn.Linear(i, k, bias= False))
+			self.embedding_ws.append(nn.Linear(i, k, bias= False))
 	
 		"""DNN"""
 		layers = []
 		input_dim = k * len(fields)
 
 		for hidden_dim in hidden_dims:
-		layers.append(nn.Linear(input_dim, hidden_dim))
-		layers.append(nn.BatchNorm1d(hidden_dim))
-		layers.append(nn.ReLU())
-		layers.append(nn.Dropout(p=dropout))
-		input_dim = hidden_dim
+			layers.append(nn.Linear(input_dim, hidden_dim))
+			layers.append(nn.BatchNorm1d(hidden_dim))
+			layers.append(nn.ReLU())
+			layers.append(nn.Dropout(p=dropout))
+			input_dim = hidden_dim
 		
 		layers.append(nn.Linear(hidden_dims[-1], n_class))
 		self.dnn = nn.Sequential(*layers)
 
 	def Dense_Embedding(self, X):
 
-	    es = []
+		es = []
 		start= 0
 		for i, field in enumerate(self.fields):
 	  		ei = self.embedding_ws[i](X[:, start:start+field]).unsqueeze(dim= 1) # ei: [n, 1, k]
@@ -114,9 +114,12 @@ class DeepFM(nn.Module):
 		return y
 
 """load model from pt file"""
+print('Loading model...')
 model= torch.load('../data/model.pt', map_location=torch.device(device))
 
+
 """Testing Phase"""
+print('start test phase...')
 preds= []
 model.eval()
 with torch.no_grad():
@@ -163,7 +166,7 @@ with open('submission.csv', 'w', newline='') as csvfile:
 	# 寫入另外幾列資料
 	for key, value in submission_dict.items():
 		if value == 'None':
-	  		writer.writerow([key, 'None'])
+			writer.writerow([key, 'None'])
 		else:
-	  		value= [str(id) for id in value]
-	  	writer.writerow([str(key), ' '.join(value)])
+			value= [str(id) for id in value]
+		writer.writerow([str(key), ' '.join(value)])

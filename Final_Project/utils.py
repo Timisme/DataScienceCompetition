@@ -6,3 +6,11 @@ def hour2cat(x):
 	else:
 		y= 2 #晚上
 	return y
+
+if __name__ == '__main__':
+	
+	import numpy as np 
+	import pandas as pd 
+
+	df = pd.read_csv('./data/order_products__prior.csv')
+	df.to_pickle('./data/order_products__prior.pkl')
