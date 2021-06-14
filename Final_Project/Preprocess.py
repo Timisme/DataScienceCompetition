@@ -1,7 +1,6 @@
 import numpy as np 
 import pandas as pd 
 from collections import Counter
-from utils import hour2cat
 
 
 def get_data(train_bool= True):
@@ -14,6 +13,16 @@ def get_data(train_bool= True):
 	orders = pd.read_csv(folder_path+files[4])
 	products = pd.read_csv(folder_path+files[5])
 	test = orders[orders['eval_set'] == 'test']
+
+	def hour2cat(x):
+		if (x>=6) & (x<= 12): #早上
+			y= 0
+		elif (x>12) & (x< 18): #下午
+			y= 1
+		else:
+			y= 2 #晚上
+		return y
+
 	orders['order_hour_of_day'] = orders['order_hour_of_day'].apply(lambda x: hour2cat(x))
   	
 	prior_order = orders[orders['eval_set']=='prior'].drop(columns= ['eval_set'], axis= 1)
