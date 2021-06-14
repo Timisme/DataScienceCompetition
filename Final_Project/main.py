@@ -7,30 +7,35 @@ from sklearn.preprocessing import OneHotEncoder
 from tqdm import tqdm
 from collections import Counter
 from my_dataset import custom_dataset
-from Preprocess import get_data
+# from Preprocess import get_data
+# from utils import load_data
 
-device= 'cuda' if torch.cuda.is_available() else 'cpu'
+# pyarrow library required
 
 def load_data(from_file= True):
 	if from_file:
-		'''load pkl from data'''
-		train_X= pd.read_pickle('./data/train_X.pkl')
-		train_y= np.load('./data/train_y.pkl', allow_pickle=True) # Series
-		test_X= pd.read_pickle('./data/test_X.pkl')
+		'''load parquet from data'''
+		train_X1= pd.read_parquet('./data/train_X1.parquet')
+		train_X2= pd.read_parquet('./data/train_X2.parquet')
+		train_y= np.load('./data/train_y.npy') # allow_pickle=True Series
+		test_X= pd.read_parquet('./data/test_X.parquet')
 		test_order_id= np.load('./data/test_order_id.npy')
+		train_X= pd.concat([train_X1, train_X2], axis= 0)
 	else:
 		train_X, train_y= get_data(train_bool= True)
 		test_X, test_order_id= get_data(train_bool= False)
 	return train_X, train_y, test_X, test_order_id
 
-train_X, train_y, test_X, test_order_id= load_data(from_file= False)
+device= 'cuda' if torch.cuda.is_available() else 'cpu'
+
+train_X, train_y, test_X, test_order_id= load_data(from_file= True)
 
 train_dense_cols= ['train_days_since_prior_order', 'prior_order_count', 'prior_dspo_mean', 'prior_dspo_var', 'user_dep_ratio', 'user_aisle_ratio']
 test_dense_cols= ['test_days_since_prior_order', 'prior_order_count', 'prior_dspo_mean', 'prior_dspo_var', 'user_dep_ratio', 'user_aisle_ratio']
 
 train_X_cat= train_X.drop(train_dense_cols, axis= 1).to_numpy()
 train_X_dense= train_X[train_dense_cols].to_numpy()
-train_y= train_y.to_numpy()
+# train_y= train_y.to_numpy()
 
 test_X_cat= test_X.drop(test_dense_cols, axis= 1).to_numpy()
 test_X_dense= test_X[test_dense_cols].to_numpy()
@@ -42,7 +47,7 @@ enc_fitted= encoder.fit(train_X_cat)
 
 '''test dataloader'''
 test_dataset = custom_dataset(test_X_cat, test_X_dense, if_y= False)
-test_loader = DataLoader(test_dataset, batch_size= batch_size, shuffle= False, num_workers=2)
+test_loader = DataLoader(test_dataset, batch_size= 512, shuffle= False, num_workers=2)
 
 class DeepFM(nn.Module):
 	def __init__(self, fields, k= 5, hidden_dims= [16, 16], dropout= 0.2, n_class= 1):
@@ -115,7 +120,7 @@ class DeepFM(nn.Module):
 
 """load model from pt file"""
 print('Loading model...')
-model= torch.load('../data/model.pt', map_location=torch.device(device))
+model= torch.load('./data/model.pt', map_location=torch.device(device))
 
 
 """Testing Phase"""
