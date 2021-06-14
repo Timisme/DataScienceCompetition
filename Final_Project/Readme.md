@@ -3,7 +3,7 @@
 # 注意事項
 1. data folder裡須包含以下檔案
 * model.pt
-前處理後資料：
+### 前處理後資料：
 * train_X1.parquet
 * train_X2.parquet
 * test_X.parquet 
