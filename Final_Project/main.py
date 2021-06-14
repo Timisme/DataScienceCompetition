@@ -34,10 +34,6 @@ fields = [len(np.unique(train_X_cat[:, i])) for i in range(train_X_cat.shape[1])
 encoder= OneHotEncoder(sparse= False, handle_unknown='ignore')
 enc_fitted= encoder.fit(train_X_cat)
 
-'''test dataloader'''
-test_dataset = custom_dataset(test_X_cat, test_X_dense, if_y= False)
-test_loader = DataLoader(test_dataset, batch_size= 512, shuffle= False, num_workers=2)
-
 class DeepFM(nn.Module):
   def __init__(self, fields, k= 5, hidden_dims= [16, 16], dropout= 0.2, n_class= 1):
     super(DeepFM, self).__init__()
