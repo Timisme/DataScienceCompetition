@@ -25,4 +25,5 @@ def split2file():
 	train_X2= train_X.iloc[int(0.5*size):, :]
 	train_X1.to_parquet('./data/train_X1.parquet')
 	train_X2.to_parquet('./data/train_X2.parquet')
-	
+
+

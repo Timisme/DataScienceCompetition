@@ -3,3 +3,4 @@ tqdm==4.56.0
 torch==1.7.1
 numpy==1.20.3
 scikit_learn==0.24.2
+pyarrow==4.0.1
