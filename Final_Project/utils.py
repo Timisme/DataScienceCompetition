@@ -13,11 +13,11 @@ def load_data():
 	test_dense = pq.read_table('./data/test_dense.parquet').to_pandas().values
 	train_y = np.load('./data/train_y.npy')
 	order_ids = np.load('./data/order_ids.npy')
-	
+
 	cat_fields = [49689, 7, 24, 7, 24, 2, 135, 22]
 	num_contns = 10
 	print('data loaded!')
-	return train_cat, train_dense, train_y, test_cat, test_dense, cat_fields, num_contns
+	return train_cat, train_dense, train_y, test_cat, test_dense, cat_fields, num_contns, order_ids
 
 def split2file():
 	# prior = pd.read_parquet('./data/order_products__prior.parquet')

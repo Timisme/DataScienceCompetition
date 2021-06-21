@@ -18,7 +18,7 @@ device= 'cpu'
 print(f'using {device}')
 train_cat, train_dense, test_cat, train_y, test_dense, cat_fields, num_contns, order_ids = load_data()
 
-batch_size= 512
+batch_size= 256
 lr = 1e-3
 n_epoch = 2
 k = 8
@@ -90,7 +90,7 @@ test_X['pred']= preds
 print('testing process done!')
 print('start creating submission file...')
 def rule(x):
-	if x > 0.6:
+	if x > 0.7:
 		return 1 
 	else:
 		return 0
